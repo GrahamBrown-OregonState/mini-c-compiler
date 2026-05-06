@@ -50,21 +50,29 @@ parseF f = do s <- readFile f
 
 %%
 -- TODO: Finish productions!
-Program : [Decl]    {Program $1}
+Program : Decls     { Decls $1 }
 
-Decl : Type id ';'                      {VarDecl $1 $2 Nothing}
-     | Type id '[' num ']' ';'          {VarDecl $1 $2 Just $4}
-     | Type String '(' [Param] ')' Comp {FunDecl $1 $2 $3 $4}
+Decls : Decl        { [$1] }
+      | Decls Decl  { $2 : $1 }
+
+Decl : Type id ';'                      { VarDecl $1 $2 Nothing }
+     | Type id '[' num ']' ';'          { VarDecl $1 $2 Just $4 }
+     | Type id '(' Params ')' Comp      { FunDecl $1 $2 $3 $4 }
 
 Type : int  { Int }
      | void { Void }
 
-Param : Type id         {Param $1 $2 True }
+Params : Param           { [$1] }
+       | Params Param    { $2 : $1 }
+
+Param : Type id         { Param $1 $2 True }
       | Type id '[' ']' { Param $1 $2 False}
 
-Comp : '{' [Decl] [Stmt] '}'   {Comp $2 $3}
+Comp : '{' Decls Stmts '}'    {Comp $2 $3}
 
--- COMPLETE
+Stmts : Stmt        { [$1] }
+      | Stmts Stmt  { $2 : $1 }
+
 Stmt : ';'                              { ExprStmt Nothing }
      | Expr ';'                         { ExprStmt Just $1}
      | Comp                             { CompStmt $1 }
@@ -74,10 +82,13 @@ Stmt : ';'                              { ExprStmt Nothing }
      | return ';'                       { RetStmt Nothing }  
      | return Expr ';'                  { RetStmt Just $2 }
 
+Exprs : Expr        { [$1] }
+      | Exprs Expr  { $2 : $1 }
+
 Expr : Var '=' Expr         { AssignExpr $1 $3}
      | Expr Op Expr         { OpExpr $2 $1 $3}
      | Var                  { VarExpr $1 }
-     | id '(' [Expr] ')'    { CallExpr $1 $3}
+     | id '(' Exprs ')'     { CallExpr $1 $3}
      | int                  { NumExpr $1 }
 
 Var : id                {Var $1 Nothing}
