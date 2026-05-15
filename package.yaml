@@ -35,6 +35,8 @@ ghc-options:
 
 library:
   source-dirs: src
+  build-tools:
+  - happy
 
 executables:
   mini-c-compiler-exe:
@@ -60,4 +62,3 @@ tests:
     - hspec
     build-tools:
     - hspec-discover
-    - happy

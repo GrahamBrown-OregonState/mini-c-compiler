@@ -25,7 +25,10 @@ source-repository head
 
 library
   exposed-modules:
+      AbsSyntax
+      AbsSyntaxPretty
       Lib
+      Parser
       Scanner
   other-modules:
       Paths_mini_c_compiler
@@ -34,6 +37,8 @@ library
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
+  build-tools:
+      happy
   build-depends:
       base >=4.7 && <5
   default-language: Haskell2010
